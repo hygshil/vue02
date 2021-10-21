@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>to do list</title>
+    <script src="/vue.js"></script>
+    <style>
+
+
+    </style>
+</head>
+<body>
+    <body>
+        <div id="app">
+            <div class="header">
+                <section>
+                    <input type="text" id="inp" v-model="task" @keyup="keyupadd" placeholder="添加">
+                </section>
+            </div>
+            <section>
+                <h2>正在进行{{go}}</h2>
+                <ul>
+                    <li v-for = "(item,index) in arr1" :key="item + index">
+                        <input type="checkbox" @click="onchange(index,item)">
+                        ------{{ item }}-------
+                        <button @click="deletequ(index)">
+                            删除
+                        </button>
+                    </li>
+                    
+                </ul>
+                <h2>已经完成{{ok}}</h2>
+                <ul>
+                    <li v-for = "(item,index) in arr2" :key="item + index">
+                        <input type="checkbox" checked  @click="onchange2(index,item)">
+                        ------{{ item }}------- 
+                        <button @click="deletedown(index)">删除</button>
+                    </li>
+                </ul>
+            </section>
+        </div>
+
+        <script>
+        
+            var vm = new Vue({
+                el:"#app",
+                mounted() {
+                var arr1 = JSON.parse(localStorage.getItem('arr1'))
+                if (arr1) {
+                    this.arr1 = arr1;
+                }
+                var arr2 = JSON.parse(localStorage.getItem('arr2'))
+                if (arr2) {
+                    this.arr2 = arr2;
+                }
+            },
+                data:{
+                    task:"",
+                    arr1:[],//未完成
+                    arr2:[],//已完成
+                },
+                computed: {
+                go() {
+                    var num = "";
+                    this.arr1.map((item) => {
+                        if (!item.checked) {
+                            num++;
+                        }
+                    });
+                    return num;
+                },
+                ok() {
+                    var num = "";
+                    this.arr2.map((item) => {
+                        if (item.checked) {
+                            num++;
+                        }
+                    });
+                    return num;
+                },
+            },
+
+                methods:{
+                    keyupadd(evet){
+                        if(evet.keyCode  == "13" &&  evet.target.value !=""){
+                            this.arr1.push(evet.target.value);
+                            this.task = "";
+                        }
+                    },
+                    deletequ(index){
+                        this.arr1.splice(index,1);
+                        localStorage.setItem('arr1', JSON.stringify(this.arr1))
+                        localStorage.setItem('arr2', JSON.stringify(this.arr2))
+                    },
+                    deletedown(index){
+                        this.arr2.splice(index,1);
+                        localStorage.setItem('arr1', JSON.stringify(this.arr1))
+                        localStorage.setItem('arr2', JSON.stringify(this.arr2))
+                    },
+                    onchange(index,item){
+                        this.arr1.splice(index,1);
+                        this.arr2.unshift(item);
+                        localStorage.setItem('arr1', JSON.stringify(this.arr1))
+                        localStorage.setItem('arr2', JSON.stringify(this.arr2))
+                    },
+                    onchange2(index,item){
+                        this.arr2.splice(index,1);
+                        this.arr1.push(item);
+                        localStorage.setItem('arr1', JSON.stringify(this.arr1))
+                        localStorage.setItem('arr2', JSON.stringify(this.arr2))
+                    },
+                }
+            })
+        </script>
+        
+</body>
